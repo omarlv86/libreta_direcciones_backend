@@ -16,7 +16,11 @@ class CreateAdress extends Migration
         Schema::create('address', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_contact');
-            $table->string('address');
+            $table->string('street');
+            $table->string('city');
+            $table->string('state');
+            $table->string('postal_code');
+            $table->string('country');
             $table->timestamps();
 
             $table->foreign('id_contact')->references('id')->on('contacts');
