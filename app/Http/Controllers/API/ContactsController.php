@@ -18,7 +18,8 @@ class ContactsController extends Controller
     public function index()
     {
         try {
-            $contacts = Contact::with(['address', 'mail', 'phone'])->get();
+            #$contacts = Contact::with(['address', 'mail', 'phone'])->get();
+            $contacts = Contact::paginate(50);
             return response()->json($contacts);
         } catch(Exception $e){
             return $this->errorResponse($e->getMessage(), $e->getCode());

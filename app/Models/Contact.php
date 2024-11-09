@@ -13,6 +13,14 @@ class Contact extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'note',
+        'birthday',
+        'page',
+        'work',
+    ];
+
     public function address(): HasMany
     {
         return $this->hasMany(Address::class);
