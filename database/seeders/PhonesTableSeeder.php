@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
 
 class PhonesTableSeeder extends Seeder
 {
@@ -15,7 +14,6 @@ class PhonesTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create();
         $contactIds = DB::table('contacts')->pluck('id')->toArray();
 
         foreach ($contactIds as $contactId) {
