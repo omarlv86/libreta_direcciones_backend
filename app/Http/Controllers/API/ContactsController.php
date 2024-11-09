@@ -18,7 +18,8 @@ class ContactsController extends Controller
     public function index()
     {
         try {
-            $contacts = Contact::all()->toArray();
+            #$contacts = Contact::all();
+            $contacts = Contact::with('address')->get();
             return response()->json($contacts);
         } catch(Exception $e){
             return $this->errorResponse($e->getMessage(), $e->getCode());
