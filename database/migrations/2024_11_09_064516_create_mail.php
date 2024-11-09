@@ -15,11 +15,11 @@ class CreateMail extends Migration
     {
         Schema::create('mails', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_contact');
+            $table->unsignedBigInteger('contact_id');
             $table->string('email');
             $table->timestamps();
 
-            $table->foreign('id_contact')->references('id')->on('contacts');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

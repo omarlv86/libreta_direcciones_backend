@@ -24,7 +24,7 @@ class PhonesTableSeeder extends Seeder
 
                 for ($i = 0; $i < $quatityOfPhones; $i++) {
                     DB::table('phones')->insert([
-                        'id_contact' => $contactId,
+                        'contact_id' => $contactId,
                         'phone' => $this->generatePhoneNumber(),
                     ]);
                 }

@@ -15,11 +15,11 @@ class CreatePhone extends Migration
     {
         Schema::create('phones', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_contact');
+            $table->unsignedBigInteger('contact_id');
             $table->string('phone');
             $table->timestamps();
 
-            $table->foreign('id_contact')->references('id')->on('contacts');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

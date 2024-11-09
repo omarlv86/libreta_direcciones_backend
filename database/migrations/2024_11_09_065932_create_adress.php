@@ -13,9 +13,9 @@ class CreateAdress extends Migration
      */
     public function up()
     {
-        Schema::create('address', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_contact');
+            $table->unsignedBigInteger('contact_id');
             $table->string('street');
             $table->string('city');
             $table->string('state');
@@ -23,7 +23,7 @@ class CreateAdress extends Migration
             $table->string('country');
             $table->timestamps();
 
-            $table->foreign('id_contact')->references('id')->on('contacts');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

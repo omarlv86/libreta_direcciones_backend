@@ -26,7 +26,7 @@ class MailTableSeeder extends Seeder
 
                 for ($i = 0; $i < $quatityOfPhones; $i++) {
                     DB::table('mails')->insert([
-                        'id_contact' => $contactId,
+                        'contact_id' => $contactId,
                         'email' => $faker->unique()->safeEmail(),
                     ]);
                 }

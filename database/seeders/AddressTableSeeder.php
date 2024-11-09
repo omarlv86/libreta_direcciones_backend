@@ -26,8 +26,8 @@ class AddressTableSeeder extends Seeder
                 $quatityOfPhones = rand(1, 3);
 
                 for ($i = 0; $i < $quatityOfPhones; $i++) {
-                    DB::table('address')->insert([
-                        'id_contact' => $contactId,
+                    DB::table('addresses')->insert([
+                        'contact_id' => $contactId,
                         'street' => $faker->streetAddress,
                         'city' => $faker->city,
                         'state' => $faker->state,
