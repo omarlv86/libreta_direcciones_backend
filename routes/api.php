@@ -21,6 +21,7 @@ use App\Http\Controllers\API\ContactsController;
 
 Route::controller(ContactsController::class)->group(function () {
     Route::get('/contacts', 'index');
-    #Route::get('/orders/{id}', 'show');
-    #Route::post('/orders', 'store');
+    Route::post('/contacts', 'create');
+    Route::put('/contacts/{id}', 'edit');
+    Route::get('/contacts/{id}', 'show');
 });
