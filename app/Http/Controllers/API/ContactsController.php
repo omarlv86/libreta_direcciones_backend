@@ -50,8 +50,25 @@ class ContactsController extends Controller
      */
     public function create(Request $request){
         try {
-            $contact = Contact::with(['address', 'mail', 'phone'])->where('id', $id)->get();
-            return response()->json($contact);
+            // Crear el contacto
+        $contact = Contact::create($request->only('name','note','birthday', 'web','work'));
+
+        // Guardar los teléfonos
+        foreach ($request->phones as $phoneData) {
+            $contact->phones()->create($phoneData);
+        }
+
+        // Guardar los correos
+        foreach ($request->mails as $mailData) {
+            $contact->mails()->create($mailData);
+        }
+
+        // Guardar las direcciones
+        foreach ($request->addresses as $addressData) {
+            $contact->addresses()->create($addressData);
+        }
+
+        return response()->json(['message' => 'Contacto creado correctamente!'], 200);
         } catch (\Throwable $th) {
             return response()->json('Error al obtener el dato');
         }
