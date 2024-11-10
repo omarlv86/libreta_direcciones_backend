@@ -14,6 +14,7 @@ class Contact extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'note',
         'birthday',
@@ -22,17 +23,17 @@ class Contact extends Model
         'status'
     ];
 
-    public function address(): HasMany
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
     }
 
-    public function mail(): HasMany
+    public function mails(): HasMany
     {
         return $this->hasMany(Mail::class);
     }
 
-    public function phone(): HasMany
+    public function phones(): HasMany
     {
         return $this->hasMany(Phone::class);
     }

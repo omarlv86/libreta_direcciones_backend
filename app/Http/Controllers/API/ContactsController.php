@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Mail;
+use App\Models\Phone;
+use App\Models\Address;
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class ContactsController extends Controller
 {
@@ -49,28 +54,54 @@ class ContactsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request){
+        DB::beginTransaction();
         try {
-            // Crear el contacto
-        $contact = Contact::create($request->only('name','note','birthday', 'web','work'));
+             $contact = Contact::create([
+                'name' => $request->name,
+                'note' => $request->note,
+                'birthday' => $request->birthday,
+                'work' => $request->work,
+                'web' => $request->web,
+                'status' => 1
+            ]);
 
-        // Guardar los teléfonos
-        foreach ($request->phones as $phoneData) {
-            $contact->phones()->create($phoneData);
-        }
+            foreach ($request->cellphones as $phone) {
+                if (!empty($phone['phone'])) {
+                    $contact->phones()->create([
+                        'phone' => $phone['phone']
+                    ]);
+                }
+                
+            }
 
-        // Guardar los correos
-        foreach ($request->mails as $mailData) {
-            $contact->mails()->create($mailData);
-        }
+            foreach ($request->mails as $mail) {
+                if (!empty($mail['email'])) {                    
+                    $contact->mails()->create([
+                        'email' => $mail['email']
+                    ]);
+                }
+            }
 
-        // Guardar las direcciones
-        foreach ($request->addresses as $addressData) {
-            $contact->addresses()->create($addressData);
-        }
+            foreach ($request->addresses as $address) {
+                if(!empty($address['street']) || !empty($address['city']) || !empty($address['state']) || !empty($address['country'])){
+                    $contact->addresses()->create([
+                        'street' => $address['street'],
+                        'city' => $address['city'],
+                        'state' => $address['state'],
+                        'country' => $address['country'],
+                        'postal_code' => $address['postal_code'],
+                    ]);
+                }
+            }
 
-        return response()->json(['message' => 'Contacto creado correctamente!'], 200);
+            DB::commit();
+
+            return response()->json(['message' => 'Contacto creado correctamente!'], 200);
         } catch (\Throwable $th) {
-            return response()->json('Error al obtener el dato');
+            
+            Log::error($th);
+            DB::rollback();
+            return response()->json(['error' => 'Ocurrió un error al registrar el contacto'], 500);
         }
     }
 
@@ -96,6 +127,20 @@ class ContactsController extends Controller
         return response()->json([
             'message' => 'Deleted successfully'
         ]);
+    }
+
+    public function validateModel($data, $model){
+        $columnas = $model->getFillable();
+        if (count(array_filter($propiedades)) > 0) {
+        Log::info($columnas);
+        }
+
+        /* foreach ($columnas as $columna) {
+            
+            Log::info($columna);
+            
+            echo $columna . '<br>';
+        } */
     }
 
 }

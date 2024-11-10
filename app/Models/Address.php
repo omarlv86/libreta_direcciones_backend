@@ -16,6 +16,7 @@ class Address extends Model
         'city',
         'state',
         'country',
+        'postal_code'
     ];
 
     public function contact(): belongsTo
