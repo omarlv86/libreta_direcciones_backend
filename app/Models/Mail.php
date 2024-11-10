@@ -11,6 +11,10 @@ class Mail extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'email',
+    ];
+
     public function contact(): belongsTo
     {
         return $this->belongsTo(Contact::class);

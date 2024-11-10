@@ -42,6 +42,22 @@ class ContactsController extends Controller
     }
 
     /**
+     * Create contact
+     *
+     * @author ricardo omar lugo vargas <omarl.vargass@hotmail.com>
+     * @param $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function create(Request $request){
+        try {
+            $contact = Contact::with(['address', 'mail', 'phone'])->where('id', $id)->get();
+            return response()->json($contact);
+        } catch (\Throwable $th) {
+            return response()->json('Error al obtener el dato');
+        }
+    }
+
+    /**
      * Edit contact 
      *
      * @author ricardo omar lugo vargas <omarl.vargass@hotmail.com>

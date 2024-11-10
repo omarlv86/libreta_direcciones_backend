@@ -11,6 +11,13 @@ class Address extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'street',
+        'city',
+        'state',
+        'country',
+    ];
+
     public function contact(): belongsTo
     {
         return $this->belongsTo(Contact::class);
