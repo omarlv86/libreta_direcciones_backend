@@ -17,13 +17,14 @@ class ContactsTableSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        foreach (range(1, 500) as $index) {
+        foreach (range(1, 5000) as $index) {
             DB::table('contacts')->insert([
                 'name' => $faker->name,
                 'note' => $faker->optional()->text(200),
                 'birthday' => $faker->dateTimeBetween('1980-01-01', '2003-12-31')->format('Y-m-d'),
                 'page' => $faker->optional()->url(),
                 'work' => $faker->optional()->company(),
+                'status' => 1,
                 'created_at' => $faker->dateTimeBetween('2023-01-01', '2024-10-31')->format('Y-m-d')
             ]);
         }

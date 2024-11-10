@@ -18,8 +18,7 @@ class ContactsController extends Controller
     public function index()
     {
         try {
-            #$contacts = Contact::with(['address', 'mail', 'phone'])->get();
-            $contacts = Contact::paginate(50);
+            $contacts = Contact::where('status', 1)->paginate(50);
             return response()->json($contacts);
         } catch(Exception $e){
             return $this->errorResponse($e->getMessage(), $e->getCode());
@@ -58,7 +57,12 @@ class ContactsController extends Controller
      * @author ricardo omar lugo vargas <omarl.vargass@hotmail.com>
      * @return \Illuminate\Http\JsonResponse
      */
-    public function delete($id){
-        return response()->json($id);
+    public function delete(Contact $contact){
+        
+        $contact->update([ 'status' => 0 ]);
+        return response()->json([
+            'message' => 'Deleted successfully'
+        ]);
     }
+
 }

@@ -19,6 +19,7 @@ class Contact extends Model
         'birthday',
         'page',
         'work',
+        'status'
     ];
 
     public function address(): HasMany

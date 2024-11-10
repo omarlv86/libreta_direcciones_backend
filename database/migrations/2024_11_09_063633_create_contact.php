@@ -20,6 +20,7 @@ class CreateContact extends Migration
             $table->date('birthday');
             $table->string('page')->nullable();
             $table->string('work')->nullable();
+            $table->boolean('status');
             $table->timestamps();
         });
     }
