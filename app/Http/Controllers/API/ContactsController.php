@@ -57,7 +57,10 @@ class ContactsController extends Controller
     public function create(Request $request){
         //DB::beginTransaction();
         try {
+            
+            
             if($request->id == ""){
+                Log::info('Crear contacto');
                 $contact = Contact::create([
                     'name' => $request->name,
                     'note' => $request->note,
@@ -96,7 +99,7 @@ class ContactsController extends Controller
                     }
                 }
 
-                return response()->json(['message' => 'Contacto creado correctamente!'], 200);
+                return response()->json(['message' => 'Contacto creado correctamente!', 'status' => 200], 200);
 
             }else{
                 
@@ -130,7 +133,7 @@ class ContactsController extends Controller
 
                 if (isset($request->addresses)) {
                     foreach ($request->addresses as $addressData) {
-                        $contact->mails()->updateOrCreate(
+                        $contact->addresses()->updateOrCreate(
                             ['id' => $addressData['id'] ?? null],
                             ['street' => $addressData['street']],
                             ['city' => $addressData['city']],
@@ -141,7 +144,7 @@ class ContactsController extends Controller
                     }
                 } 
                 
-                return response()->json(['message' => 'Contacto actualizado correctamente!', 'data' => $contact->load('addresses', 'mails', 'phones')], 200, );
+                return response()->json(['message' => 'Contacto actualizado correctamente!', 'status' => 200], 200);
             }
             
             //DB::commit();
