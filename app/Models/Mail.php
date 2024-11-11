@@ -12,6 +12,7 @@ class Mail extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'email',
     ];
 

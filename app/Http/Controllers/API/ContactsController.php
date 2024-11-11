@@ -39,9 +39,10 @@ class ContactsController extends Controller
      */
     public function show($id){
         try {
-            $contact = Contact::with(['address', 'mail', 'phone'])->where('id', $id)->get();
+            $contact = Contact::with(['addresses', 'mails', 'phones'])->where('id', $id)->first();
             return response()->json($contact);
         } catch (\Throwable $th) {
+            Log::info($th);
             return response()->json('Error al obtener el dato');
         }
     }
@@ -54,53 +55,102 @@ class ContactsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request){
-        DB::beginTransaction();
+        //DB::beginTransaction();
         try {
-             $contact = Contact::create([
-                'name' => $request->name,
-                'note' => $request->note,
-                'birthday' => $request->birthday,
-                'work' => $request->work,
-                'web' => $request->web,
-                'status' => 1
-            ]);
+            if($request->id == ""){
+                $contact = Contact::create([
+                    'name' => $request->name,
+                    'note' => $request->note,
+                    'birthday' => $request->birthday,
+                    'work' => $request->work,
+                    'web' => $request->web,
+                    'status' => 1
+                ]);
 
-            foreach ($request->cellphones as $phone) {
-                if (!empty($phone['phone'])) {
-                    $contact->phones()->create([
-                        'phone' => $phone['phone']
-                    ]);
+                foreach ($request->cellphones as $phone) {
+                    if (!empty($phone['phone'])) {
+                        $contact->phones()->create([
+                            'phone' => $phone['phone']
+                        ]);
+                    }
+                    
                 }
+    
+                foreach ($request->mails as $mail) {
+                    if (!empty($mail['email'])) {                    
+                        $contact->mails()->create([
+                            'email' => $mail['email']
+                        ]);
+                    }
+                }
+
+                foreach ($request->addresses as $address) {
+                    if(!empty($address['street']) || !empty($address['city']) || !empty($address['state']) || !empty($address['country'])){
+                        $contact->addresses()->create([
+                            'street' => $address['street'],
+                            'city' => $address['city'],
+                            'state' => $address['state'],
+                            'country' => $address['country'],
+                            'postal_code' => $address['postal_code'],
+                        ]);
+                    }
+                }
+
+                return response()->json(['message' => 'Contacto creado correctamente!'], 200);
+
+            }else{
                 
-            }
+                Log::info('Actualizar contacto');
+                $contact = Contact::find($request->id);
+                $contact->update([
+                    'name' => $request->name,
+                    'note' => $request->note,
+                    'birthday' => $request->birthday,
+                    'work' => $request->work,
+                    'web' => $request->web,
+                ]);
 
-            foreach ($request->mails as $mail) {
-                if (!empty($mail['email'])) {                    
-                    $contact->mails()->create([
-                        'email' => $mail['email']
-                    ]);
+                if (isset($request->cellphones)) {
+                    foreach ($request->cellphones as $phoneData) {
+                        $contact->phones()->updateOrCreate(
+                            ['id' => $phoneData['id'] ?? null],
+                            ['phone' => $phoneData['phone']]
+                        );
+                    }
                 }
+
+                if (isset($request->mails)) {
+                    foreach ($request->mails as $mailData) {
+                        $contact->mails()->updateOrCreate(
+                            ['id' => $mailData['id'] ?? null],
+                            ['email' => $mailData['email']]
+                        );
+                    }
+                } 
+
+                if (isset($request->addresses)) {
+                    foreach ($request->addresses as $addressData) {
+                        $contact->mails()->updateOrCreate(
+                            ['id' => $addressData['id'] ?? null],
+                            ['street' => $addressData['street']],
+                            ['city' => $addressData['city']],
+                            ['state' => $addressData['state']],
+                            ['country' => $addressData['country']],
+                            ['postal_code' => $addressData['postal_code']]
+                        );
+                    }
+                } 
+                
+                return response()->json(['message' => 'Contacto actualizado correctamente!', 'data' => $contact->load('addresses', 'mails', 'phones')], 200, );
             }
+            
+            //DB::commit();
 
-            foreach ($request->addresses as $address) {
-                if(!empty($address['street']) || !empty($address['city']) || !empty($address['state']) || !empty($address['country'])){
-                    $contact->addresses()->create([
-                        'street' => $address['street'],
-                        'city' => $address['city'],
-                        'state' => $address['state'],
-                        'country' => $address['country'],
-                        'postal_code' => $address['postal_code'],
-                    ]);
-                }
-            }
-
-            DB::commit();
-
-            return response()->json(['message' => 'Contacto creado correctamente!'], 200);
+            
         } catch (\Throwable $th) {
             
             Log::error($th);
-            DB::rollback();
+            //DB::rollback();
             return response()->json(['error' => 'Ocurrió un error al registrar el contacto'], 500);
         }
     }
