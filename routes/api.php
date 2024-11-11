@@ -25,4 +25,5 @@ Route::controller(ContactsController::class)->group(function () {
     Route::put('/contacts/{id}', 'edit');
     Route::get('/contacts/{id}', 'show');
     Route::delete('/contacts/{contact}', 'delete');
+    Route::post('/contacts/filter', 'filterData');
 });

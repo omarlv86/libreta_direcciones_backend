@@ -182,18 +182,38 @@ class ContactsController extends Controller
         ]);
     }
 
-    public function validateModel($data, $model){
-        $columnas = $model->getFillable();
-        if (count(array_filter($propiedades)) > 0) {
-        Log::info($columnas);
-        }
+    public function filterData(Request $request){
+        
+        $filter = $request->filter;
 
-        /* foreach ($columnas as $columna) {
-            
-            Log::info($columna);
-            
-            echo $columna . '<br>';
-        } */
+        $query = Contact::query()->with(['addresses', 'mails', 'phones']);
+
+        $this->applyFilter($query, (new Contact())->getFillable(), $filter);
+
+        $query->orWhereHas('addresses', function ($query) use ($filter) {
+            $this->applyFilter($query, (new Address())->getFillable(), $filter);
+        });
+
+        $query->orWhereHas('mails', function ($query) use ($filter) {
+            $this->applyFilter($query, (new Mail())->getFillable(), $filter);
+        });
+
+        $query->orWhereHas('phones', function ($query) use ($filter) {
+            $this->applyFilter($query, (new Phone())->getFillable(), $filter);
+        });
+
+        $resultados = $query->get();
+        return response()->json(['message' => 'Buscando...' . $request->filter, 'data' => $resultados, 'status' => 200], 200);
     }
+
+    function applyFilter($query, $columns, $filter)
+    {
+        $query->where(function ($query) use ($columns, $filter) {
+            foreach ($columns as $column) {
+                $query->orWhere($column, 'like', "%{$filter}%");
+            }
+        });
+    }
+
 
 }
